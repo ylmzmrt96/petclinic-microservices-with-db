@@ -1,5 +1,10 @@
+version: '3.8'
+
 services:
   config-server:
+    build:
+      context: ./spring-petclinic-config-server
+      dockerfile: Dockerfile
     image: petclinic-config-server:dev
     container_name: config-server
     deploy:
@@ -13,9 +18,12 @@ services:
       retries: 10
       start_period: 30s
     ports:
-     - 8888:8888
+      - 8888:8888
 
   discovery-server:
+    build:
+      context: ./spring-petclinic-discovery-server
+      dockerfile: Dockerfile
     image: petclinic-discovery-server:dev
     container_name: discovery-server
     deploy:
@@ -32,9 +40,12 @@ services:
       config-server:
         condition: service_healthy
     ports:
-     - 8761:8761
+      - 8761:8761
 
   customers-service:
+    build:
+      context: ./spring-petclinic-customers-service
+      dockerfile: Dockerfile
     image: petclinic-customers-service:dev
     container_name: customers-service
     restart: on-failure:3
@@ -48,9 +59,12 @@ services:
       discovery-server:
         condition: service_healthy
     ports:
-    - 8081:8081
+      - 8081:8081
 
   visits-service:
+    build:
+      context: ./spring-petclinic-visits-service
+      dockerfile: Dockerfile
     image: petclinic-visits-service:dev
     container_name: visits-service
     restart: on-failure:3
@@ -64,9 +78,12 @@ services:
       discovery-server:
         condition: service_healthy
     ports:
-     - 8082:8082
+      - 8082:8082
 
   vets-service:
+    build:
+      context: ./spring-petclinic-vets-service
+      dockerfile: Dockerfile
     image: petclinic-vets-service:dev
     container_name: vets-service
     restart: on-failure:3
@@ -80,9 +97,12 @@ services:
       discovery-server:
         condition: service_healthy
     ports:
-     - 8083:8083
+      - 8083:8083
 
   api-gateway:
+    build:
+      context: ./spring-petclinic-api-gateway
+      dockerfile: Dockerfile
     image: petclinic-api-gateway:dev
     container_name: api-gateway
     deploy:
@@ -95,7 +115,7 @@ services:
       discovery-server:
         condition: service_healthy
     ports:
-     - 8080:8080
+      - 8080:8080
 
   tracing-server:
     image: openzipkin/zipkin
@@ -105,11 +125,14 @@ services:
         limits:
           memory: 512M
     environment:
-    - JAVA_OPTS=-XX:+UnlockExperimentalVMOptions -Djava.security.egd=file:/dev/./urandom
+      - JAVA_OPTS=-XX:+UnlockExperimentalVMOptions -Djava.security.egd=file:/dev/./urandom
     ports:
-     - 9411:9411
+      - 9411:9411
 
   admin-server:
+    build:
+      context: ./spring-petclinic-admin-server
+      dockerfile: Dockerfile
     image: petclinic-admin-server:dev
     container_name: admin-server
     deploy:
@@ -122,9 +145,12 @@ services:
       discovery-server:
         condition: service_healthy
     ports:
-     - 9090:9090
+      - 9090:9090
 
   hystrix-dashboard:
+    build:
+      context: ./spring-petclinic-hystrix-dashboard
+      dockerfile: Dockerfile
     image: petclinic-hystrix-dashboard:dev
     container_name: hystrix-dashboard
     deploy:
@@ -137,11 +163,12 @@ services:
       discovery-server:
         condition: service_healthy
     ports:
-     - 7979:7979
-
-  ## Grafana / Prometheus
+      - 7979:7979
 
   grafana-server:
+    build:
+      context: ./spring-petclinic-grafana-server
+      dockerfile: Dockerfile
     image: petclinic-grafana-server:dev
     container_name: grafana-server
     deploy:
@@ -149,9 +176,12 @@ services:
         limits:
           memory: 256M
     ports:
-    - 3000:3000
+      - 3000:3000
 
   prometheus-server:
+    build:
+      context: ./spring-petclinic-prometheus-server
+      dockerfile: Dockerfile
     image: petclinic-prometheus-server:dev
     container_name: prometheus-server
     deploy:
@@ -159,9 +189,7 @@ services:
         limits:
           memory: 256M
     ports:
-    - 9091:9090
-
-  ## Mysql
+      - 9091:9090
 
   mysql-server:
     image: mysql:5.7.8
@@ -174,4 +202,4 @@ services:
         limits:
           memory: 256M
     ports:
-    - 3306:3306
+      - 3306:3306
